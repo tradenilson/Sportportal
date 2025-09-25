@@ -1,0 +1,21 @@
+datasource db { provider = "sqlite"; url = env("DATABASE_URL") }
+generator client { provider = "prisma-client-js" }
+model NewsItem {
+  id          Int      @id @default(autoincrement())
+  source      String
+  sourceUrl   String   @unique
+  title       String
+  excerpt     String?
+  publishedAt DateTime?
+  topics      Json
+  visible     Boolean  @default(true)
+  pinned      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+model Config {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}

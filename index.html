@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sportportalen – Frölunda, Brynäs, V75, Stryktipset</title>
+  <style>
+    :root {
+      --bg:#08110d; --panel:#0e1a15; --border:#163228; --text:#e8f1ec;
+      --muted:#98b5a8; --brand:#006a3b; --accent:#d71920; --link:#87c7ff;
+    }
+    *{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+    .container{max-width:1100px;margin:0 auto;padding:16px}
+    header{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:16px}
+    .hdr{display:flex;align-items:center;gap:10px}
+    .card{background:linear-gradient(180deg, rgba(14,26,21,0.9), rgba(14,26,21,0.95));border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .grid{display:grid;gap:16px;grid-template-columns:1fr} @media (min-width: 768px){.grid{grid-template-columns:1fr 1fr}}
+    .muted{color:var(--muted)} .badge{display:inline-block;padding:2px 8px;font-size:12px;border:1px solid var(--border);border-radius:999px;background:#0b1a14;color:var(--muted)}
+    .logo{width:28px;height:28px}
+    footer{margin-top:12px;text-align:center;font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="hdr">
+        <svg class="logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="22" fill="#006a3b"/><path d="M14 30c6-2 10-8 12-16 3 8 7 14 12 16-5 2-9 3-12 8-3-5-7-6-12-8z" fill="#d71920"/><circle cx="24" cy="24" r="4" fill="#f5f7f5"/></svg>
+        <h1 style="font-size:28px;margin:0"><span>Sport</span><span style="color:var(--accent)">portalen</span></h1>
+      </div>
+      <p class="muted" style="font-size:13px;margin:0">Frölunda HC, Brynäs IF, V75 & Stryktipset • uppdateras var 45:e minut</p>
+    </header>
+
+    <main class="grid">
+      <div class="card"><h2>Ishockey – Frölunda HC</h2><ul id="frolunda"></ul></div>
+      <div class="card"><h2>Ishockey – Brynäs IF</h2><ul id="brynas"></ul></div>
+      <div class="card"><h2>V75 / Trav</h2><ul id="v75"></ul></div>
+      <div class="card"><h2>Stryktipset</h2><ul id="stryktipset"></ul></div>
+    </main>
+
+    <footer id="foot">Laddar…</footer>
+  </div>
+
+  <script>
+    async function load() {
+      const res = await fetch('data/news.json?nocache=' + Date.now());
+      const json = await res.json();
+      const topics = ['frolunda','brynas','v75','stryktipset'];
+      for (const t of topics) {
+        const ul = document.getElementById(t);
+        ul.style.listStyle='none'; ul.style.padding='0'; ul.style.margin='0';
+        const items = (json.items[t]||[]).slice(0,25);
+        if (!items.length) { ul.innerHTML = '<li class="muted">Inga rubriker ännu.</li>'; continue; }
+        ul.innerHTML = items.map(it => {
+          const date = it.publishedAt ? new Date(it.publishedAt).toLocaleString('sv-SE') : 'okänt datum';
+          return `<li style="margin-bottom:12px">
+            <a href="${it.sourceUrl}" target="_blank" rel="noreferrer">${it.title}</a>
+            <div class="muted" style="font-size:12px">${it.source} • ${date}</div>
+          </li>`;
+        }).join('');
+      }
+      document.getElementById('foot').textContent =
+        `Senast uppdaterad: ${new Date(json.generatedAt).toLocaleString('sv-SE')}. Källor: GP, DN, SvD, Expressen, Aftonbladet.`;
+    }
+    load().catch(e => { document.getElementById('foot').textContent = 'Kunde inte läsa data/news.json'; });
+  </script>
+</body>
+</html>

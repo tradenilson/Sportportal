@@ -1,0 +1,11 @@
+{
+  "name": "sportportalen-ghpages",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "update": "node scripts/fetch.js"
+  },
+  "dependencies": {
+    "rss-parser": "^3.13.0"
+  }
+}
